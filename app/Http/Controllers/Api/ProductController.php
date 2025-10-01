@@ -18,6 +18,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'price' => 'required|numeric',
+            'supplier' => 'required|string|max:225',
         ]);
 
         $product = Product::create($request->all());
