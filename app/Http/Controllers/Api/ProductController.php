@@ -16,9 +16,11 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'price' => 'required|numeric',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
             'supplier' => 'required|string|max:225',
+            'jumlah' => 'required|integer|min:0',
+            'penerima' => 'required|string|max:255',
         ]);
 
         $product = Product::create($request->all());
@@ -36,6 +38,14 @@ class ProductController extends Controller
     {
         $product = Product::find($id);
         if (!$product) return response()->json(['message' => 'Not Found'], 404);
+
+        $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'price' => 'sometimes|numeric|min:0',
+            'supplier' => 'sometimes|string|max:225',
+            'jumlah' => 'sometimes|integer|min:0',
+            'penerima' => 'sometimes|string|max:255',
+        ]);
 
         $product->update($request->all());
         return response()->json($product, 200);
