@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Sistem Inventaris Gudang' }}</title>
-    @vite('resources/css/app.css')
+        <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 flex">
 
@@ -16,7 +16,7 @@
             <a href="{{ route('barang-masuk') }}" class="block p-2 rounded hover:bg-gray-700">Barang Masuk</a>
             <a href="{{ route('barang-keluar') }}" class="block p-2 rounded hover:bg-gray-700">Barang Keluar</a>
             <a href="{{ route('data-barang') }}" class="block p-2 rounded hover:bg-gray-700">Data Barang</a>
-            <a href="{{ route('stock-barang') }}" class="block p-2 rounded hover:bg-gray-700">Stok Barang</a>
+            <a href="{{ route('stok-barang') }}" class="block p-2 rounded hover:bg-gray-700">Stock Barang</a>
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button class="w-full text-left p-2 rounded hover:bg-red-700 mt-6">Logout</button>

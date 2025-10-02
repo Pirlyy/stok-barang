@@ -26,12 +26,23 @@
             @foreach($barangs as $i => $b)
             <tr>
                 <td class="border px-4 py-2">{{ $i+1 }}</td>
-                <td class="border px-4 py-2">{{ $b->nama_barang }}</td>
-                <td class="border px-4 py-2">{{ $b->satuan }}</td>
-                <td class="border px-4 py-2">{{ $b->jumlah }}</td>
-                <td class="border px-4 py-2">{{ $b->supplier ?? '-' }}</td>
                 <td class="border px-4 py-2">
-                    <a href="{{ route('data-barang.edit',$b->id) }}" class="text-blue-600">Edit</a> |
+                    <form action="{{ route('data-barang.update',$b->id) }}" method="POST">
+                        @csrf @method('PUT')
+                        <input type="text" name="nama_barang" value="{{ $b->nama_barang }}" class="border p-1 w-full">
+                </td>
+                <td class="border px-4 py-2">
+                        <input type="text" name="satuan" value="{{ $b->satuan }}" class="border p-1 w-full">
+                </td>
+                <td class="border px-4 py-2">
+                        <input type="number" name="jumlah" value="{{ $b->jumlah }}" class="border p-1 w-full">
+                </td>
+                <td class="border px-4 py-2">
+                        <input type="text" name="supplier" value="{{ $b->supplier ?? '-' }}" class="border p-1 w-full">
+                </td>
+                <td class="border px-4 py-2">
+                        <button class="text-green-600">Save</button>
+                    </form> |
                     <form action="{{ route('data-barang.destroy',$b->id) }}" method="POST" class="inline">
                         @csrf @method('DELETE')
                         <button class="text-red-600" onclick="return confirm('Yakin hapus?')">Hapus</button>

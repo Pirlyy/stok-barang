@@ -76,7 +76,20 @@ class BarangController extends Controller
 
     public function indexStokBarang()
     {
-        $barangs = DataBarang::all();
-        return view('stok-barang', compact('barangs'));
+        $stok = DataBarang::all();
+        return view('stok-barang', compact('stok'));
     }
+
+    public function updateDataBarang(Request $request, $id)
+{
+    DataBarang::findOrFail($id)->update($request->only('nama_barang','satuan','jumlah','supplier'));
+    return back()->with('success','Data berhasil diupdate!');
+}
+
+public function destroyDataBarang($id)
+{
+    DataBarang::findOrFail($id)->delete();
+    return back()->with('success','Data berhasil dihapus!');
+}
+
 }
