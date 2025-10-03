@@ -13,7 +13,6 @@ return new class extends Migration
 {
     Schema::table('products', function (Blueprint $table) {
         $table->integer('jumlah')->after('supplier');
-        $table->string('penerima')->after('jumlah');
     });
 }
     /**

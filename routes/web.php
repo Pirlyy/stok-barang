@@ -6,6 +6,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BarangController;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
+use App\Http\Controllers\Api\ProductController;
+
 
 // ========== AUTH ROUTES ==========
 
@@ -37,17 +39,23 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard', compact('barangMasuk', 'barangKeluar'));
     });
 
-    // Barang Routes
+    // ========== BARANG ROUTES (CRUD) ==========
+Route::middleware(['auth'])->group(function () {
+
+    // Barang Masuk
     Route::get('/barang-masuk', [BarangController::class, 'indexBarangMasuk'])->name('barang-masuk');
-    Route::post('/barang/masuk', [BarangController::class, 'storeBarangMasuk'])->name('barang.store');
+    Route::post('/barang-masuk', [BarangController::class, 'storeBarangMasuk'])->name('barang-masuk.store');
 
+    // Barang Keluar
     Route::get('/barang-keluar', [BarangController::class, 'indexBarangKeluar'])->name('barang-keluar');
-    Route::post('/barang/keluar', [BarangController::class, 'storeBarangKeluar'])->name('barang-keluar.store');
+    Route::post('/barang-keluar', [BarangController::class, 'storeBarangKeluar'])->name('barang-keluar.store');
 
+    // Data & Stok Barang
     Route::get('/data-barang', [BarangController::class, 'indexDataBarang'])->name('data-barang');
     Route::get('/stok-barang', [BarangController::class, 'indexStokBarang'])->name('stok-barang');
 
     Route::put('/data-barang/{id}', [BarangController::class, 'updateDataBarang'])->name('data-barang.update');
     Route::delete('/data-barang/{id}', [BarangController::class, 'destroyDataBarang'])->name('data-barang.destroy');
 
+});
 });

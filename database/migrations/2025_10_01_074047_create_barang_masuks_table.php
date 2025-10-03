@@ -14,7 +14,6 @@ return new class extends Migration
             $table->integer('jumlah');
             $table->string('satuan');
             $table->string('supplier')->nullable();
-            $table->date('tanggal');
             $table->timestamps();
         });
     }

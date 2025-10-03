@@ -20,7 +20,7 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'supplier' => 'required|string|max:225',
             'jumlah' => 'required|integer|min:0',
-            'penerima' => 'required|string|max:255',
+            'description' => 'nullable/string',
         ]);
 
         $product = Product::create($request->all());
@@ -44,7 +44,7 @@ class ProductController extends Controller
             'price' => 'sometimes|numeric|min:0',
             'supplier' => 'sometimes|string|max:225',
             'jumlah' => 'sometimes|integer|min:0',
-            'penerima' => 'sometimes|string|max:255',
+            'tanggal'  => now(),
         ]);
 
         $product->update($request->all());

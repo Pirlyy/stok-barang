@@ -17,7 +17,7 @@
         <div>
             <label class="block font-medium mb-1">Nama Barang</label>
             <select name="nama_barang" class="w-full border rounded-lg px-3 py-2" required>
-                @foreach($barangs as $b)
+                @foreach($barang as $b)
                     <option value="{{ $b->nama_barang }}">{{ $b->nama_barang }}</option>
                 @endforeach
             </select>

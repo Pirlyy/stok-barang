@@ -2,94 +2,96 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BarangMasuk;
-use App\Models\BarangKeluar;
-use App\Models\DataBarang;
+use App\Models\Product; // kalau modelnya masih pakai "Product", biarkan ini
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class BarangController extends Controller
 {
-    public function indexBarangMasuk()
+    // 🔹 Tampilkan semua barang
+    public function index()
     {
-        return view('barang-masuk');
+        return response()->json(Product::all(), 200);
     }
 
-    public function storeBarangMasuk(Request $request)
-    {
-        $data = $request->validate([
-            'nama_barang' => 'required',
-            'jumlah' => 'required|integer|min:1',
-            'satuan' => 'required',
-            'supplier' => 'required',
-            'tanggal' => 'required|date'
-        ]);
-
-        DB::transaction(function () use ($data) {
-            BarangMasuk::create($data);
-
-            $row = DataBarang::firstOrCreate(
-                ['nama_barang' => $data['nama_barang']],
-                ['jumlah' => 0, 'stok' => 0, 'satuan' => $data['satuan'], 'supplier' => $data['supplier']]
-            );
-
-            $row->increment('jumlah', $data['jumlah']);
-            $row->increment('stok', $data['jumlah']);
-        });
-
-        return back()->with('success', 'Barang masuk berhasil');
-    }
-
-    public function indexBarangKeluar()
-    {
-        $barangs = DataBarang::all();
-        return view('barang-keluar', compact('barangs'));
-    }
-
-    public function storeBarangKeluar(Request $request)
-    {
-        $data = $request->validate([
-            'nama_barang' => 'required',
-            'jumlah' => 'required|integer|min:1',
-            'satuan' => 'required',
-            'tanggal' => 'required|date',
-            'penerima' => 'required'
-        ]);
-
-        BarangKeluar::create($data);
-
-        $row = DataBarang::where('nama_barang', $data['nama_barang'])->first();
-        if ($row) {
-            $row->decrement('stok', $data['jumlah']);
-            if ($row->stok < 0) $row->stok = 0;
-            $row->save();
-        }
-
-        return back()->with('success', 'Barang keluar berhasil');
-    }
-
-    public function indexDataBarang()
-    {
-        $barangs = DataBarang::all();
-        return view('data-barang', compact('barangs'));
-    }
-
-    public function indexStokBarang()
-    {
-        $stok = DataBarang::all();
-        return view('stok-barang', compact('stok'));
-    }
-
-    public function updateDataBarang(Request $request, $id)
+    // 🔹 Tambah barang baru
+    // Tampilkan halaman barang masuk
+public function indexBarangMasuk()
 {
-    DataBarang::findOrFail($id)->update($request->only('nama_barang','satuan','jumlah','supplier'));
-    return back()->with('success','Data berhasil diupdate!');
+    $barang = Product::all();
+    return view('barang.barang-masuk', compact('barang'));
 }
 
+// Simpan barang masuk via form
+public function storeBarangMasuk(Request $request)
+{
+    $validated = $request->validate([
+        'name'        => 'required|string|max:255',
+        'price'       => 'required|numeric|min:0',
+        'supplier'    => 'required|string|max:225',
+        'jumlah'      => 'required|integer|min:0',
+        'description' => 'required|string|max:255',
+    ]);
+
+    $validated['tanggal'] = now();
+
+    Product::create($validated);
+
+    return redirect()->route('barang-masuk')->with('success', 'Barang masuk berhasil ditambahkan!');
+}
+
+// Tampilkan halaman barang keluar
+public function indexBarangKeluar()
+{
+    $barang = Product::all();
+    return view('barang.barang-keluar', compact('barang'));
+}
+
+// Simpan barang keluar via form
+public function storeBarangKeluar(Request $request)
+{
+    $validated = $request->validate([
+        'name'     => 'required|string|max:255',
+        'jumlah'   => 'required|integer|min:1',
+    ]);
+
+    // logika barang keluar, misalnya kurangi stok
+    $barang = Product::findOrFail($request->id);
+    $barang->jumlah -= $validated['jumlah'];
+    $barang->save();
+
+    return redirect()->route('barang-keluar')->with('success', 'Barang keluar berhasil dicatat!');
+}
+
+// BarangController.php
+public function indexDataBarang()
+{
+    $barang = Product::all(); // ambil semua data barang dari tabel products
+    return view('data-barang', compact('barang'));
+}
+
+public function updateDataBarang(Request $request, $id)
+{
+    $validated = $request->validate([
+        'name'        => 'required|string|max:255',
+        'price'       => 'required|numeric|min:0',
+        'supplier'    => 'required|string|max:225',
+        'jumlah'      => 'required|integer|min:0',
+        'description' => 'required|string|max:255',
+    ]);
+
+    $barang = Product::findOrFail($id);
+    $barang->update($validated);
+
+    return redirect()->route('data-barang')->with('success', 'Data barang berhasil diperbarui!');
+}
+
+// Hapus data barang
 public function destroyDataBarang($id)
 {
-    DataBarang::findOrFail($id)->delete();
-    return back()->with('success','Data berhasil dihapus!');
+    $barang = Product::findOrFail($id);
+    $barang->delete();
+
+    return redirect()->route('data-barang')->with('success', 'Data barang berhasil dihapus!');
 }
 
 }

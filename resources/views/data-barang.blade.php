@@ -16,36 +16,42 @@
             <tr>
                 <th class="border px-4 py-2 text-left">#</th>
                 <th class="border px-4 py-2 text-left">Nama Barang</th>
-                <th class="border px-4 py-2 text-left">Satuan</th>
+                <th class="border px-4 py-2 text-left">Harga</th>
                 <th class="border px-4 py-2 text-left">Jumlah</th>
                 <th class="border px-4 py-2 text-left">Supplier</th>
+                <th class="border px-4 py-2 text-left">Keterangan</th>
                 <th class="border px-4 py-2 text-left">Aksi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($barangs as $i => $b)
+            @foreach($barang as $i => $b)
             <tr>
                 <td class="border px-4 py-2">{{ $i+1 }}</td>
                 <td class="border px-4 py-2">
-                    <form action="{{ route('data-barang.update',$b->id) }}" method="POST">
+                    <form action="{{ route('data-barang.update',$b->id) }}" method="POST" class="flex gap-2">
                         @csrf @method('PUT')
-                        <input type="text" name="nama_barang" value="{{ $b->nama_barang }}" class="border p-1 w-full">
+                        <input type="text" name="name" value="{{ $b->name }}" class="border p-1 w-full">
                 </td>
                 <td class="border px-4 py-2">
-                        <input type="text" name="satuan" value="{{ $b->satuan }}" class="border p-1 w-full">
+                        <input type="number" name="price" value="{{ $b->price }}" class="border p-1 w-full">
                 </td>
                 <td class="border px-4 py-2">
                         <input type="number" name="jumlah" value="{{ $b->jumlah }}" class="border p-1 w-full">
                 </td>
                 <td class="border px-4 py-2">
-                        <input type="text" name="supplier" value="{{ $b->supplier ?? '-' }}" class="border p-1 w-full">
+                        <input type="text" name="supplier" value="{{ $b->supplier }}" class="border p-1 w-full">
                 </td>
                 <td class="border px-4 py-2">
-                        <button class="text-green-600">Save</button>
-                    </form> |
+                        <input type="text" name="description" value="{{ $b->description }}" class="border p-1 w-full">
+                </td>
+                <td class="border px-4 py-2 flex gap-2">
+                        <button class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">Save</button>
+                    </form>
+
                     <form action="{{ route('data-barang.destroy',$b->id) }}" method="POST" class="inline">
                         @csrf @method('DELETE')
-                        <button class="text-red-600" onclick="return confirm('Yakin hapus?')">Hapus</button>
+                        <button class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                            onclick="return confirm('Yakin hapus barang ini?')">Hapus</button>
                     </form>
                 </td>
             </tr>
