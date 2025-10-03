@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class BarangMasuk extends Model
 {
     protected $fillable = [
-        'nama_barang', 'jumlah', 'supplier'
+        'nama_barang', 'jumlah', 'supplier', 'product_id', 'tanggal'
     ];
 }

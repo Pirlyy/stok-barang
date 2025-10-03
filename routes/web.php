@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\BarangController;
+use App\Http\Controllers\BarangMasukController;
 use App\Http\Controllers\BarangKeluarController;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
@@ -44,18 +44,18 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->group(function () {
 
     // Barang Masuk
-    Route::get('/barang-masuk', [BarangController::class, 'indexBarangMasuk'])->name('barang-masuk');
-    Route::post('/barang-masuk', [BarangController::class, 'storeBarangMasuk'])->name('barang-masuk.store');
+    Route::get('/barang-masuk', [BarangMasukController::class, 'indexBarangMasuk'])->name('barang-masuk');
+    Route::post('/barang-masuk', [BarangMasukController::class, 'storeBarangMasuk'])->name('barang-masuk.store');
 
     // Barang Keluar
     Route::get('/barang-keluar', [BarangKeluarController::class, 'index'])->name('barang-keluar');
     Route::post('/barang-keluar', [BarangKeluarController::class, 'store'])->name('barang-keluar.store');
     // Data & Stok Barang
-    Route::get('/data-barang', [BarangController::class, 'indexDataBarang'])->name('data-barang');
-    Route::get('/stok-barang', [BarangController::class, 'indexStokBarang'])->name('stok-barang');
+    Route::get('/data-barang', [BarangMasukController::class, 'indexDataBarang'])->name('data-barang');
+    Route::get('/stok-barang', [BarangMasukController::class, 'indexStokBarang'])->name('stok-barang');
 
-    Route::put('/data-barang/{id}', [BarangController::class, 'updateDataBarang'])->name('data-barang.update');
-    Route::delete('/data-barang/{id}', [BarangController::class, 'destroyDataBarang'])->name('data-barang.destroy');
+    Route::put('/data-barang/{id}', [BarangMasukController::class, 'updateDataBarang'])->name('data-barang.update');
+    Route::delete('/data-barang/{id}', [BarangMasukController::class, 'destroyDataBarang'])->name('data-barang.destroy');
 
 });
 });
