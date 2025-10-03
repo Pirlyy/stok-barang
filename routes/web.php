@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BarangController;
+use App\Models\BarangMasuk;
+use App\Models\BarangKeluar;
 
 // ========== AUTH ROUTES ==========
 
@@ -17,10 +19,23 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // ========== PROTECTED ROUTES ==========
+
 Route::middleware(['auth'])->group(function () {
 
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard', [DashboardController::class, 'index']);
+    // Dashboard
+    Route::get('/', function () {
+        $barangMasuk = BarangMasuk::count();
+        $barangKeluar = BarangKeluar::count();
+
+        return view('dashboard', compact('barangMasuk', 'barangKeluar'));
+    })->name('dashboard');
+
+    Route::get('/dashboard', function () {
+        $barangMasuk = BarangMasuk::count();
+        $barangKeluar = BarangKeluar::count();
+
+        return view('dashboard', compact('barangMasuk', 'barangKeluar'));
+    });
 
     // Barang Routes
     Route::get('/barang-masuk', [BarangController::class, 'indexBarangMasuk'])->name('barang-masuk');
