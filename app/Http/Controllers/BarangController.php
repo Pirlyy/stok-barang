@@ -39,28 +39,6 @@ public function storeBarangMasuk(Request $request)
     return redirect()->route('barang-masuk')->with('success', 'Barang masuk berhasil ditambahkan!');
 }
 
-// Tampilkan halaman barang keluar
-public function indexBarangKeluar()
-{
-    $barang = Product::all();
-    return view('barang.barang-keluar', compact('barang'));
-}
-
-// Simpan barang keluar via form
-public function storeBarangKeluar(Request $request)
-{
-    $validated = $request->validate([
-        'name'     => 'required|string|max:255',
-        'jumlah'   => 'required|integer|min:1',
-    ]);
-
-    // logika barang keluar, misalnya kurangi stok
-    $barang = Product::findOrFail($request->id);
-    $barang->jumlah -= $validated['jumlah'];
-    $barang->save();
-
-    return redirect()->route('barang-keluar')->with('success', 'Barang keluar berhasil dicatat!');
-}
 
 // BarangController.php
 public function indexDataBarang()
@@ -93,5 +71,4 @@ public function destroyDataBarang($id)
 
     return redirect()->route('data-barang')->with('success', 'Data barang berhasil dihapus!');
 }
-
 }

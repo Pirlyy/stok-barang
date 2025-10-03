@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\BarangKeluarController;
 use App\Models\BarangMasuk;
 use App\Models\BarangKeluar;
 use App\Http\Controllers\Api\ProductController;
@@ -47,9 +48,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/barang-masuk', [BarangController::class, 'storeBarangMasuk'])->name('barang-masuk.store');
 
     // Barang Keluar
-    Route::get('/barang-keluar', [BarangController::class, 'indexBarangKeluar'])->name('barang-keluar');
-    Route::post('/barang-keluar', [BarangController::class, 'storeBarangKeluar'])->name('barang-keluar.store');
-
+    Route::get('/barang-keluar', [BarangKeluarController::class, 'index'])->name('barang-keluar');
+    Route::post('/barang-keluar', [BarangKeluarController::class, 'store'])->name('barang-keluar.store');
     // Data & Stok Barang
     Route::get('/data-barang', [BarangController::class, 'indexDataBarang'])->name('data-barang');
     Route::get('/stok-barang', [BarangController::class, 'indexStokBarang'])->name('stok-barang');
