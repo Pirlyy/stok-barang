@@ -8,14 +8,16 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('barang_masuks', function (Blueprint $table) {
-            $table->id();
-            $table->string('nama_barang');
-            $table->integer('jumlah');
-            $table->string('satuan');
-            $table->string('supplier')->nullable();
-            $table->timestamps();
-        });
+        // database/migrations/xxxx_xx_xx_create_barang_masuks_table.php
+Schema::create('barang_masuks', function (Blueprint $table) {
+    $table->id();
+    $table->string('nama_barang');
+    $table->integer('jumlah');
+    $table->string('supplier')->nullable();
+    $table->string('satuan')->nullable();
+    $table->timestamps();
+});
+
     }
 
     public function down()
