@@ -4,113 +4,146 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\BarangMasuk;
+use Illuminate\Support\Facades\Storage;
 
 class BarangMasukController extends Controller
 {
-    // 🔹 Menampilkan form tambah barang masuk
+    /**
+     * 🔹 Tampilkan form barang masuk
+     */
     public function indexBarangMasuk()
     {
-        return view('barang.barang-masuk');
+        $produk = Product::orderBy('name', 'asc')->get();
+        return view('barang.barang-masuk', compact('produk'));
     }
 
-    // 🔹 Menyimpan barang baru ke tabel products
+    /**
+     * 🔹 Simpan data barang masuk (tambah stok / tambah produk baru)
+     */
     public function storeBarangMasuk(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'price' => 'required|numeric|min:0',
+        $validated = $request->validate([
+            'existing_product_id' => 'nullable|exists:products,id',
+            'name' => 'nullable|string|max:255',
+            'price' => 'nullable|numeric|min:0',
             'jumlah' => 'required|integer|min:1',
             'supplier' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'nullable|image|max:2048'
         ]);
 
-        // Upload gambar jika ada
-        $fileName = null;
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/barang'), $fileName);
+        // Jika user memilih barang lama (update stok)
+        if ($request->filled('existing_product_id')) {
+            $product = Product::findOrFail($request->existing_product_id);
+            $product->jumlah += $request->jumlah; // ✅ gunakan kolom jumlah
+            $product->supplier = $request->supplier ?: $product->supplier;
+            $product->save();
+        } 
+        // Jika barang baru (buat produk baru)
+        else {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'price' => 'required|numeric|min:0',
+            ]);
+
+            $imagePath = null;
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filename = time() . '.' . $file->getClientOriginalExtension();
+                $file->move(public_path('uploads/barang'), $filename);
+                $imagePath = $filename;
+            }
+
+            $product = Product::create([
+                'name' => $request->name,
+                'price' => $request->price,
+                'jumlah' => $request->jumlah,
+                'description' => $request->description,
+                'supplier' => $request->supplier,
+                'image' => $imagePath,
+            ]);
         }
 
-        // Simpan ke tabel products
-        Product::create([
-            'name' => $request->name,
-            'price' => $request->price,
+        // Simpan riwayat barang masuk
+        BarangMasuk::create([
+            'product_id' => $product->id,
+            'nama_barang'=>$product->name,
             'jumlah' => $request->jumlah,
             'supplier' => $request->supplier,
-            'description' => $request->description,
-            'image' => $fileName,
         ]);
 
-        return redirect()->route('barang-masuk')->with('success', 'Barang berhasil ditambahkan!');
+        return redirect()->back()->with('success', 'Barang berhasil disimpan atau stok berhasil ditambahkan!');
     }
 
-    // 🔹 Menampilkan stok barang (tanpa CRUD)
+    /**
+     * 🔹 Halaman Stok Barang (Card View)
+     */
     public function indexStokBarang()
     {
-        $stok = Product::all();
+        $stok = Product::orderBy('name', 'asc')->get();
         return view('stok-barang', compact('stok'));
     }
 
-    // 🔹 Menampilkan halaman data barang (CRUD)
+    /**
+     * 🔹 Halaman Data Barang (CRUD View)
+     */
     public function indexDataBarang()
     {
-        $barang = Product::all();
-        return view('data-barang', compact('barang'));
+        $stok = Product::orderBy('id', 'desc')->get();
+        return view('data-barang', compact('stok'));
     }
 
-    // 🔹 Update data barang
+    /**
+     * 🔹 Update Data Barang
+     */
     public function updateDataBarang(Request $request, $id)
     {
-        $barang = Product::findOrFail($id);
-
-        $request->validate([
+        $product = Product::findOrFail($id);
+        
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'jumlah' => 'required|integer|min:0',
-            'supplier' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'supplier' => 'nullable|string|max:255',
+            'image' => 'nullable|image|max:2048',
         ]);
 
-        // Upload gambar baru jika ada
+        // Update gambar jika ada
         if ($request->hasFile('image')) {
-            // Hapus gambar lama
-            if ($barang->image && file_exists(public_path('uploads/barang/' . $barang->image))) {
-                unlink(public_path('uploads/barang/' . $barang->image));
+            if ($product->image && file_exists(public_path('uploads/barang/' . $product->image))) {
+                unlink(public_path('uploads/barang/' . $product->image));
             }
-
             $file = $request->file('image');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/barang'), $fileName);
-            $barang->image = $fileName;
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/barang'), $filename);
+            $product->image = $filename;
         }
 
-        $barang->update([
+        $product->update([
             'name' => $request->name,
             'price' => $request->price,
             'jumlah' => $request->jumlah,
-            'supplier' => $request->supplier,
             'description' => $request->description,
-            'image' => $barang->image,
+            'supplier' => $request->supplier,
         ]);
 
-        return redirect()->route('data-barang')->with('success', 'Data barang berhasil diperbarui!');
+        return redirect()->back()->with('success', 'Data barang berhasil diperbarui!');
     }
 
-    // 🔹 Hapus data barang
+    /**
+     * 🔹 Hapus Data Barang
+     */
     public function destroyDataBarang($id)
     {
-        $barang = Product::findOrFail($id);
+        $product = Product::findOrFail($id);
 
-        // Hapus gambar dari folder
-        if ($barang->image && file_exists(public_path('uploads/barang/' . $barang->image))) {
-            unlink(public_path('uploads/barang/' . $barang->image));
+        if ($product->image && file_exists(public_path('uploads/barang/' . $product->image))) {
+            unlink(public_path('uploads/barang/' . $product->image));
         }
 
-        $barang->delete();
-
-        return redirect()->route('data-barang')->with('success', 'Data barang berhasil dihapus!');
+        $product->delete();
+        return redirect()->back()->with('success', 'Data barang berhasil dihapus!');
     }
 }

@@ -16,7 +16,7 @@
             <a href="{{ route('barang-masuk') }}" class="block p-2 rounded hover:bg-gray-700">Barang Masuk</a>
             <a href="{{ route('barang-keluar') }}" class="block p-2 rounded hover:bg-gray-700">Barang Keluar</a>
             <a href="{{ route('data-barang') }}" class="block p-2 rounded hover:bg-gray-700">Data Barang</a>
-            <a href="{{ route('stok-barang') }}" class="block p-2 rounded hover:bg-gray-700">Stock Barang</a>
+            <a href="{{ route('stok-barang') }}" class="block p-2 rounded hover:bg-gray-700">List Stock</a>
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button class="w-full text-left p-2 rounded hover:bg-red-700 mt-6">Logout</button>

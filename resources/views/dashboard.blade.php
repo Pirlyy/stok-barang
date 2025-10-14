@@ -14,7 +14,7 @@
 <script>
     const ctx = document.getElementById('barangChart').getContext('2d');
     new Chart(ctx, {
-        type: 'line', // bisa diganti 'line', 'pie', dll
+        type: 'bar', // bisa diganti 'line', 'pie', dll
         data: {
             labels: ['Barang Masuk', 'Barang Keluar'],
             datasets: [{
